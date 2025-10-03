@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Pro Company Scraper",
+  "version": "1.1",
+  "description": "Professional scraper for company data from Google Maps via CSV",
+  "permissions": ["storage", "tabs", "activeTab", "scripting", "downloads"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  }
+}
