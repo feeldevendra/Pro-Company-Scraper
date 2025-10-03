@@ -37,27 +37,35 @@ csvInput.addEventListener('change', (e) => {
     complete: (results) => {
       console.log('Parsed:', results);
       const data = results.data;
-      // Validate headers: require "Company" and "Country" (City or Country acceptable but at least Company+Country ideally)
-      const fields = results.meta.fields.map(f=>f.trim());
-      if(!fields.map(f=>f.toLowerCase()).includes('company')){
+      // Validate headers: require "Company" and at least "Country" (City optional)
+      const fields = results.meta.fields.map(f=>f.trim().toLowerCase());
+      if(!fields.includes('company')){
         alert('CSV must include "Company" header.');
         startBtn.disabled = true;
         return;
       }
-      // Filter rows: must have Company and at least City or Country (we require at least Company)
+      if(!fields.includes('country')){
+        alert('CSV must include "Country" header.');
+        startBtn.disabled = true;
+        return;
+      }
+
+      // Normalize rows
       rows = data
         .map(r => ({
-          Company: r['Company']?.trim(),
+          Company: (r['Company'] || r['company'] || '').trim(),
           City: (r['City'] || r['city'] || r['City/Town'] || '').trim(),
           Country: (r['Country'] || r['country'] || '').trim(),
           __raw: r
         }))
-        .filter(r => r.Company && (r.City || r.Country));
+        .filter(r => r.Company && r.Country); // ✅ Require only Company + Country now
+
       if(!rows.length){
-        alert('No valid rows found. Ensure Company and City/Country present.');
+        alert('No valid rows found. Ensure at least Company and Country are present.');
         startBtn.disabled = true;
         return;
       }
+
       total = rows.length;
       countText.textContent = `0 / ${total}`;
       progressText.textContent = `Ready to start (${total} rows)`;
@@ -111,6 +119,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResp) => {
       li.className = 'result-item';
       resultsList.prepend(li); // newest on top
     }
+
     // Build content
     if(msg.success){
       li.classList.remove('result-error');
