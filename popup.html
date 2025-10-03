@@ -5,28 +5,23 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Pro Company Scraper</title>
   <link rel="stylesheet" href="popup.css" />
-  <!-- Font Awesome for icons -->
+  <!-- Font Awesome -->
   <script src="https://kit.fontawesome.com/a2d9b7b9b1.js" crossorigin="anonymous"></script>
-  <!-- PapaParse CDN (or download papaparse.min.js and reference locally) -->
+  <!-- PapaParse -->
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 <body>
   <div class="container">
     <h2><i class="fa-solid fa-magnifying-glass"></i> Pro Company Scraper</h2>
 
-    <!-- File upload -->
     <div class="upload-area">
       <label class="file-label">
-        <input id="csvFile" type="file" accept=".csv" hidden />
-        <span class="btn">📂 Select CSV file</span>
+        <input id="csvFileInput" type="file" accept=".csv" />
+        <span>Select CSV file (Company, City, Country)</span>
       </label>
-      <small class="hint">
-        CSV headers must include <code>Company</code> and <code>Country</code>.
-        <br />Example: <code>Company,City,Country</code>
-      </small>
+      <small class="hint">CSV headers must include <code>Company</code> and <code>Country</code>.</small>
     </div>
 
-    <!-- Control buttons -->
     <div class="controls">
       <button id="startBtn" class="btn primary" disabled>
         <i class="fa-solid fa-play"></i> Start Scraping
@@ -36,36 +31,26 @@
       </button>
     </div>
 
-    <!-- Progress info -->
     <div class="progress-area">
       <div class="progress-meta">
         <div id="progressText">Idle</div>
         <div id="countText">0 / 0</div>
       </div>
-
       <div class="progress-bar-wrap">
         <div id="progressBar" class="progress-bar"></div>
       </div>
-
-      <div id="spinner" class="spinner hidden" title="Working..."></div>
+      <div id="spinner" class="spinner hidden" title="working..."></div>
     </div>
 
-    <!-- Log results -->
     <div class="log-area">
       <ul id="resultsList"></ul>
     </div>
 
-    <!-- Footer -->
     <div class="footer">
-      <small>
-        ⚠️ Educational demo only. Scraping Google Maps DOM may break & violates ToS.  
-        Use Google Places API (see popup.js comments).
-      </small>
+      <small>Educational demo. Use Google Places API for production.</small>
     </div>
   </div>
 
-  <!-- Popup logic -->
   <script src="popup.js"></script>
 </body>
 </html>
-
