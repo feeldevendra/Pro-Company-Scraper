@@ -17,10 +17,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     Papa.parse(file, {
       header: true,
+      skipEmptyLines: true, // Improved: Skip empty lines
       complete: (parseResult) => {
-        const companies = parseResult.data.filter(row => row.Company && row.City && row.Country); // Basic validation
+        console.log('Parsed CSV:', parseResult); // Debug log
+        if (parseResult.errors.length > 0) {
+          alert('CSV parsing errors: ' + parseResult.errors.map(e => e.message).join('; '));
+          return;
+        }
+        const companies = parseResult.data.filter(row => 
+          row.Company && row.Company.trim() && // Required Company
+          (row.City || row.Country) // At least City or Country
+        );
         totalCompanies = companies.length;
-        if (totalCompanies === 0) return alert('No valid companies in CSV.');
+        if (totalCompanies === 0) return alert('No valid companies found in CSV. Ensure headers are "Company", "City", "Country".');
 
         progressDiv.textContent = `Processing 0/${totalCompanies} companies...`;
         progressFill.style.width = '0%';
@@ -31,12 +40,15 @@ document.addEventListener('DOMContentLoaded', () => {
         startBtn.disabled = true;
 
         chrome.runtime.sendMessage({ action: 'processCompanies', companies }, (response) => {
-          if (response.status === 'started') {
-            // Processing initiated
+          if (response && response.status === 'started') {
+            // Processing started
           }
         });
       },
-      error: (err) => alert('Error parsing CSV: ' + err.message)
+      error: (err) => {
+        console.error('CSV Parse Error:', err);
+        alert('Error parsing CSV: ' + err.message + '. Check file encoding (UTF-8) and format.');
+      }
     });
   });
 
@@ -56,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <span>${resultText}</span>
         </div>
       `;
-      resultsDiv.scrollTop = resultsDiv.scrollHeight; // Auto-scroll
+      resultsDiv.scrollTop = resultsDiv.scrollHeight;
 
       progressDiv.textContent = `Processing ${processedCount}/${totalCompanies} companies...`;
       progressFill.style.width = `${(processedCount / totalCompanies) * 100}%`;
@@ -69,9 +81,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   downloadBtn.addEventListener('click', () => {
-    const csvContent = Papa.unparse(results);
+    const csvContent = Papa.unparse(results, { header: true });
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
-    chrome.downloads.download({ url, filename: 'scraped_companies_pro.csv', saveAs: true });
+    chrome.downloads.download({ url, filename: 'scraped_companies.csv', saveAs: true });
   });
 });
