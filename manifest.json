@@ -1,16 +1,16 @@
 {
-  "name": "Pro Company Scraper",
-  "description": "Upload CSV (Company, City, Country), search Google Maps, extract details (educational demo).",
-  "version": "1.0",
   "manifest_version": 3,
+  "name": "Pro Company Scraper",
+  "version": "1.0",
+  "description": "Upload CSV (Company, City, Country) → search Google Maps → extract name/phone/website/email (educational demo).",
   "permissions": [
-    "tabs",
     "scripting",
+    "tabs",
     "downloads",
     "storage"
   ],
   "host_permissions": [
-    "https://www.google.com/*"
+    "<all_urls>"
   ],
   "background": {
     "service_worker": "background.js"
